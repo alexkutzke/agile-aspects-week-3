@@ -1,6 +1,39 @@
 main();
 
 function main() {
+  transactions = list();
+
+  if (transactions && transactions.length > 0) {
+    transactionType(transactions);
+  } else {
+    console.log('No transactions provided!');
+  }
+}
+
+function transactionType(transactions) {
+    for (const transaction of transactions) {
+        if (transaction.status === 'OPEN') {
+            returnTransaction(transaction)
+        } else {
+          console.log('Invalid transaction type!', transaction);
+        }
+      }
+}
+
+function returnTransaction(transaction) {
+   console.log(
+    'Processing '+ OrganizeStringForReturn(transaction.method)  + ' ' + transaction.type + ' for amount: ' + transaction.amount
+  );
+}
+
+function OrganizeStringForReturn(text){
+    text = text.replace("_", " ");
+    return text.toLowerCase().split(' ').map((word) => {
+        return word[0].toUpperCase() + word.slice(1);
+    }).join(' ')
+}
+
+function list() {
   const transactions = [
     {
       id: 't1',
@@ -31,37 +64,5 @@ function main() {
       amount: '15.99',
     },
   ];
-
-  CheckForTransactions(transactions);
-}
-
-function CheckForTransactions(transactions) {
-  if (transactions && transactions.length > 0) {
-    transactionType(transactions);
-  } else {
-    console.log('No transactions provided!');
-  }
-}
-
-function transactionType(transactions) {
-    for (const transaction of transactions) {
-        if (transaction.status === 'OPEN') {
-            returnTransaction(transaction)
-        } else {
-          console.log('Invalid transaction type!', transaction);
-        }
-      }
-}
-
-function returnTransaction(transaction) {
-   console.log(
-    'Processing '+ OrganizeStringForReturn(transaction.method)  + ' ' + transaction.type + ' for amount: ' + transaction.amount
-  );
-}
-
-function OrganizeStringForReturn(text){
-    text = text.replace("_", " ");
-    return text.toLowerCase().split(' ').map((word) => {
-        return word[0].toUpperCase() + word.slice(1);
-    }).join(' ')
+  return transactions;
 }
