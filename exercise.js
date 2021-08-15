@@ -101,4 +101,3 @@ function getTransactionsFromQueue(){
       amount: '15.99',
     },
   ];
-}
