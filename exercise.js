@@ -1,7 +1,7 @@
 main();
 
 function main() {
-  const transactionBatch = [
+  const transactionsBatch = [
     {
       id: 't1',
       type: 'PAYMENT',
@@ -32,12 +32,12 @@ function main() {
     },
   ];
 
-  processTransactions(transactionBatch);
+  processTransactionsBatch(transactionsBatch);
 }
 
-function processTransactions(transactionBatch) {
-  if ( transactionsAreValid(transactionBatch) ) {
-    for (const transaction of transactionBatch) {
+function processTransactionsBatch(transactionsBatch) {
+  if ( transactionsBatchIsValid(transactionsBatch) ) {
+    for (const transaction of transactionsBatch) {
       processTransactionByType(transaction);
     }
   } else {
@@ -107,6 +107,6 @@ function processPlanRefund(transaction) {
   console.log('Processing plan refund for amount: ' + transaction.amount);
 }
 
-function transactionsAreValid(transactions) {
-  return (transactions && transactions.length > 0);
+function transactionsBatchIsValid(transactionsBatch) {
+  return (transactionsBatch && transactionsBatch.length > 0);
 }
