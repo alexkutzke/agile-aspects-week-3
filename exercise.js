@@ -57,29 +57,37 @@ function processTransactionByType(transaction) {
 
 function processRefund(transaction) {
   if (transaction.status === 'OPEN') {
-    if (transaction.method === 'CREDIT_CARD') {
-      processCreditCardRefund(transaction);
-    } else if (transaction.method === 'PAYPAL') {
-      processPayPalRefund(transaction);
-    } else if (transaction.method === 'PLAN') {
-      processPlanRefund(transaction);
-    }
+    processRefundByMethod(transaction);
   } else {
     console.log('Invalid transaction type!', transaction);
   }
 }
 
+function processRefundByMethod(transaction) {
+  if (transaction.method === 'CREDIT_CARD') {
+    processCreditCardRefund(transaction);
+  } else if (transaction.method === 'PAYPAL') {
+    processPayPalRefund(transaction);
+  } else if (transaction.method === 'PLAN') {
+    processPlanRefund(transaction);
+  }
+}
+
 function processPayment(transaction) {
   if (transaction.status === 'OPEN') {
-    if (transaction.method === 'CREDIT_CARD') {
-      processCreditCardPayment(transaction);
-    } else if (transaction.method === 'PAYPAL') {
-      processPayPalPayment(transaction);
-    } else if (transaction.method === 'PLAN') {
-      processPlanPayment(transaction);
-    }
+    processPaymentByMethod(transaction);
   } else {
     console.log('Invalid transaction type!', transaction);
+  }
+}
+
+function processPaymentByMethod(transaction) {
+  if (transaction.method === 'CREDIT_CARD') {
+    processCreditCardPayment(transaction);
+  } else if (transaction.method === 'PAYPAL') {
+    processPayPalPayment(transaction);
+  } else if (transaction.method === 'PLAN') {
+    processPlanPayment(transaction);
   }
 }
 
