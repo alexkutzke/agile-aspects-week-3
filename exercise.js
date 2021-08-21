@@ -37,50 +37,63 @@ function main() {
 
 function processTransactions(transactions) {
   if (transactions && transactions.length > 0) {
-    for (const transaction of transactions) {
-      if (transaction.type === 'PAYMENT') {
-        if (transaction.status === 'OPEN') {
-          if (transaction.method === 'CREDIT_CARD') {
-            processCreditCardPayment(transaction);
-          } else if (transaction.method === 'PAYPAL') {
-            processPayPalPayment(transaction);
-          } else if (transaction.method === 'PLAN') {
-            processPlanPayment(transaction);
-          }
-        } else {
-          console.log('Invalid transaction type!', transaction);
-        }
-      } else if (transaction.type === 'REFUND') {
-        if (transaction.status === 'OPEN') {
-          if (transaction.method === 'CREDIT_CARD') {
-            processCreditCardRefund(transaction);
-          } else if (transaction.method === 'PAYPAL') {
-            processPayPalRefund(transaction);
-          } else if (transaction.method === 'PLAN') {
-            processPlanRefund(transaction);
-          }
-        } else {
-          console.log('Invalid transaction type!', transaction);
-        }
-      } else {
-        console.log('Invalid transaction type!', transaction);
-      }
-    }
-  } else {
+      transactionsHandler(transactions)
+  }
+  else {
     console.log('No transactions provided!');
   }
 }
 
+
+function transactionsHandler(transactions){
+    for (const transaction of transactions){
+	const status = isStatusOpen(transaction.status)
+	const processFunction = getTransactionFunction(transaction.type, transaction.method)
+
+	if (status && processFunction){
+	    processFunction(transaction)
+	}
+	else{
+	    console.log('Invalid transaction type!', transaction);
+	}
+    }
+}
+
+function isStatusOpen(status){
+    let isOpen = false
+
+    if(status==='OPEN'){
+	isOpen = true
+    }
+    else{
+	isOpen = false
+    }
+
+    return isOpen
+}
+
+function getTransactionFunction(type, method){
+    const transactionsFunctions = {
+	'PAYMENT': {
+	    'CREDIT_CARD': processCreditCardPayment,
+	    'PAYPAL': processPayPalPayment,
+	    'PLAN': processPlanPayment,
+	},
+	'REFUND': {
+	    'CREDIT_CARD': processCreditCardRefund,
+	    'PAYPAL': processPayPalRefund,
+	    'PLAN': processPlanRefund,
+	}	
+    }
+    return transactionsFunctions[type][method]
+}
+
 function processCreditCardPayment(transaction) {
-  console.log(
-    'Processing credit card payment for amount: ' + transaction.amount
-  );
+  console.log('Processing credit card payment for amount: ' + transaction.amount);
 }
 
 function processCreditCardRefund(transaction) {
-  console.log(
-    'Processing credit card refund for amount: ' + transaction.amount
-  );
+  console.log('Processing credit card refund for amount: ' + transaction.amount);
 }
 
 function processPayPalPayment(transaction) {
