@@ -45,9 +45,9 @@ function processTransactions(transactions) {
 
 function processTransactionByType(transaction) {
   if (getTransactionType(transaction) === 'PAYMENT' && getTransactionStatus(transaction)) {
-    processTransactionMethods(transaction)
+    processTransactionMethod(transaction)
   } else if (getTransactionType(transaction) === 'REFUND' && getTransactionStatus(transaction)) {
-    processTransactionMethods(transaction)
+    processTransactionMethod(transaction)
   }
 }
 
@@ -66,7 +66,7 @@ function getTransactionStatus(transaction) {
   return true
 }
 
-function processTransactionMethods(transaction) {
+function processTransactionMethod(transaction) {
   switch (transaction.method) {
     case 'CREDIT_CARD':
       processCreditCardPayment(transaction);
