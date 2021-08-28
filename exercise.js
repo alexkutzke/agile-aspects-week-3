@@ -36,41 +36,88 @@ function main() {
 }
 
 function processTransactions(transactions) {
-  if (transactions && transactions.length > 0) {
-    for (const transaction of transactions) {
-      if (transaction.type === 'PAYMENT') {
-        if (transaction.status === 'OPEN') {
-          if (transaction.method === 'CREDIT_CARD') {
-            processCreditCardPayment(transaction);
-          } else if (transaction.method === 'PAYPAL') {
-            processPayPalPayment(transaction);
-          } else if (transaction.method === 'PLAN') {
-            processPlanPayment(transaction);
-          }
-        } else {
-          console.log('Invalid transaction type!', transaction);
-        }
-      } else if (transaction.type === 'REFUND') {
-        if (transaction.status === 'OPEN') {
-          if (transaction.method === 'CREDIT_CARD') {
-            processCreditCardRefund(transaction);
-          } else if (transaction.method === 'PAYPAL') {
-            processPayPalRefund(transaction);
-          } else if (transaction.method === 'PLAN') {
-            processPlanRefund(transaction);
-          }
-        } else {
-          console.log('Invalid transaction type!', transaction);
-        }
-      } else {
-        console.log('Invalid transaction type!', transaction);
-      }
-    }
-  } else {
+
+  if (!(transactions && transactions.length > 0)) {
     console.log('No transactions provided!');
+
+  } else {
+    for (const transaction of transactions) {
+
+      transactionType(transaction);
+    }
   }
 }
 
+
+function transactionType(transaction) {
+
+  switch (transaction.type) {
+    case 'PAYMENT': {
+      transactionStatus(transaction)
+      break;
+    }
+
+    case 'REFUND': {
+      transactionStatus(transaction)
+      break;
+    }
+
+    default: {
+      msgInvalidTransactionType(transaction)
+    }
+  }
+}
+
+function transactionStatus(transaction) {
+  if (transaction.status === 'OPEN') {
+    transactionMethod(transaction)
+  } else {
+    msgInvalidTransactionType(transaction)
+  }
+}
+
+function transactionMethod(transaction) {
+  switch (transaction.method) {
+    case 'CREDIT_CARD': {
+      processTypePayment(transaction);
+      break;
+    }
+
+    case 'PAYPAL': {
+      processTypePayment(transaction);
+      break;
+    }
+
+    case 'PLAN': {
+      processTypePayment(transaction);
+      break;
+    }
+
+    default: {
+      msgInvalidTransactionType(transaction)
+    }
+  }
+}
+
+function msgInvalidTransactionType(transaction) {
+  console.log('Invalid transaction type!', transaction);
+}
+
+function processTypePayment(transaction) {
+  switch (transaction.type) {
+    case 'PAYMENT': {
+      console.log('Processing ' + transaction.method + ' payment for amount: ' + transaction.amount);
+      break;
+    }
+
+    case 'REFUND': {
+      console.log('Processing ' + transaction.method + ' refund for amount: ' + transaction.amount);
+      break;
+    }
+  }
+}
+
+// Functions Antigas
 function processCreditCardPayment(transaction) {
   console.log(
     'Processing credit card payment for amount: ' + transaction.amount
