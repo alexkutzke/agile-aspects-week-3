@@ -54,9 +54,10 @@ function areProvidedTransactions(transactions){
 
 function isTypeValidTransaction(transaction){
   if(transaction.status == "CLOSED" || (transaction.type != "REFUND" && transaction.type != "PAYMENT")){
-    showErrorMessage('Invalid transaction type!', transaction);
+    showErrorMessage('Invalid transaction type!', + JSON.stringify(transaction));
     return;
   }
+  return true;
 }
 
 function executeTransactionProcess(transaction){
@@ -113,4 +114,8 @@ function processPlanPayment(transaction) {
 
 function processPlanRefund(transaction) {
   console.log('Processing plan refund for amount: ' + transaction.amount);
+}
+
+function showErrorMessage(msg){
+  console.error(msg)
 }
