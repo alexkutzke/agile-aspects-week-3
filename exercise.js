@@ -40,25 +40,13 @@ function processTransactions(transactions) {
     for (const transaction of transactions) {
       if (transaction.type === 'PAYMENT') {
         if (transaction.status === 'OPEN') {
-          if (transaction.method === 'CREDIT_CARD') {
-            processCreditCardPayment(transaction);
-          } else if (transaction.method === 'PAYPAL') {
-            processPayPalPayment(transaction);
-          } else if (transaction.method === 'PLAN') {
-            processPlanPayment(transaction);
-          }
+          tpPagamento(transaction);
         } else {
           console.log('Invalid transaction type!', transaction);
         }
       } else if (transaction.type === 'REFUND') {
         if (transaction.status === 'OPEN') {
-          if (transaction.method === 'CREDIT_CARD') {
-            processCreditCardRefund(transaction);
-          } else if (transaction.method === 'PAYPAL') {
-            processPayPalRefund(transaction);
-          } else if (transaction.method === 'PLAN') {
-            processPlanRefund(transaction);
-          }
+          tpPagamento(transaction);
         } else {
           console.log('Invalid transaction type!', transaction);
         }
@@ -71,30 +59,24 @@ function processTransactions(transactions) {
   }
 }
 
-function processCreditCardPayment(transaction) {
+function tpPagamento(transaction){
+  var msg = '';
+  switch (transaction.method) {
+    case 'CREDIT_CARD':
+      msg = 'Processing credit card payment for amount:'
+      processCreditCardPayment(msg , transaction);
+    case 'PAYPAL':
+      msg = 'Processing PayPal payment for amount: '
+      processPayPalPayment(transaction);
+    case 'PLAN':
+      msg = 'Processing plan payment for amount: '
+      processPlanPayment(transaction);
+    default:
+  }
+}
+
+function processCreditCardPayment(msg , transaction) {
   console.log(
-    'Processing credit card payment for amount: ' + transaction.amount
+    msg + transaction.amount
   );
-}
-
-function processCreditCardRefund(transaction) {
-  console.log(
-    'Processing credit card refund for amount: ' + transaction.amount
-  );
-}
-
-function processPayPalPayment(transaction) {
-  console.log('Processing PayPal payment for amount: ' + transaction.amount);
-}
-
-function processPayPalRefund(transaction) {
-  console.log('Processing PayPal refund for amount: ' + transaction.amount);
-}
-
-function processPlanPayment(transaction) {
-  console.log('Processing plan payment for amount: ' + transaction.amount);
-}
-
-function processPlanRefund(transaction) {
-  console.log('Processing plan refund for amount: ' + transaction.amount);
 }
