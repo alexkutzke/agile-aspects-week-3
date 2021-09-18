@@ -36,38 +36,100 @@ function main() {
 }
 
 function processTransactions(transactions) {
-  if (transactions && transactions.length > 0) {
-    for (const transaction of transactions) {
-      if (transaction.type === 'PAYMENT') {
-        if (transaction.status === 'OPEN') {
-          if (transaction.method === 'CREDIT_CARD') {
-            processCreditCardPayment(transaction);
-          } else if (transaction.method === 'PAYPAL') {
-            processPayPalPayment(transaction);
-          } else if (transaction.method === 'PLAN') {
-            processPlanPayment(transaction);
-          }
-        } else {
-          console.log('Invalid transaction type!', transaction);
-        }
-      } else if (transaction.type === 'REFUND') {
-        if (transaction.status === 'OPEN') {
-          if (transaction.method === 'CREDIT_CARD') {
-            processCreditCardRefund(transaction);
-          } else if (transaction.method === 'PAYPAL') {
-            processPayPalRefund(transaction);
-          } else if (transaction.method === 'PLAN') {
-            processPlanRefund(transaction);
-          }
-        } else {
-          console.log('Invalid transaction type!', transaction);
-        }
-      } else {
-        console.log('Invalid transaction type!', transaction);
-      }
+
+  if(checkInsufficientInputs(transactions)) {
+    reportInexistingTransaction();
+  }
+
+  const transactionProcessorList = getTransactionProcessorList(transactions);
+  runTransactionProcessorList(transactions, transactionProcessorList);
+}
+
+function runTransactionProcessorList(transactions, transactionProcessorList){
+  for(let i=0; i < transactions.length; i++){
+    transactionProcessorList[i](transactions[i]);
+  }
+}
+
+function checkInsufficientInputs(transactions){
+  if (!transactions || transactions.length === 0)
+  {
+    return true;
+  }
+  return false;
+}
+
+function reportInexistingTransaction(){
+  console.log('No transactions provided!');
+}
+
+function getTransactionProcessorList(transactions){
+  let transactionProcessorList = [];
+
+  for (const transaction of transactions) {
+    const transactionProcessor = getSpecificTransactionProcessor(transaction);
+    if(transactionProcessor) {
+      transactionProcessorList.push(transactionProcessor);
     }
-  } else {
-    console.log('No transactions provided!');
+  }
+
+  return transactionProcessorList;
+}
+
+function getSpecificTransactionProcessor(transaction){
+  if(checkTransactionIsClosed(transaction))
+  {
+    return reportInvalidTransaction;
+  }
+
+  switch(transaction.type)
+  {
+    case "REFUND":
+      return getRefundProcessor(transaction);
+    case "PAYMENT":
+      return getPaymentProcessor(transaction);
+    default:
+      return null;
+  }
+}
+
+function reportInvalidTransaction(transaction){
+  console.log('Invalid transaction type!', transaction);
+}
+
+function checkTransactionIsClosed(transaction)
+{
+  if (transaction.status == "CLOSED") {
+    return true;
+  }
+  return false;
+}
+
+function getRefundProcessor(transaction){
+  switch(transaction.method)
+  {
+    case "PLAN":
+      return processPlanRefund;
+    case "CREDIT_CARD":
+      return processCreditCardRefund;
+    case "PAYPAL":
+      return processPayPalRefund;
+    default:
+      return null;
+  }
+}
+
+function getPaymentProcessor(transaction){
+  switch(transaction.method)
+  {
+    case "PLAN":
+      return processPlanPayment;
+    case "CREDIT_CARD":
+      return processCreditCardPayment;
+    case "PAYPAL":
+      return processPayPalPayment;
+    default:
+      return null;
   }
 }
 
