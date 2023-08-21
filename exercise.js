@@ -35,52 +35,50 @@ function main() {
   processTransactions(transactions);
 }
 
+const paymentProcessors = {
+  CREDIT_CARD: {
+    PAYMENT: processCreditCardPayment,
+    REFUND: processCreditCardRefund,
+  },
+  PAYPAL: {
+    PAYMENT: processPayPalPayment,
+    REFUND: processPayPalRefund,
+  },
+  PLAN: {
+    PAYMENT: processPlanPayment,
+    REFUND: processPlanRefund,
+  },
+};
+
 function processTransactions(transactions) {
-  if (transactions && transactions.length > 0) {
-    for (const transaction of transactions) {
-      if (transaction.type === 'PAYMENT') {
-        if (transaction.status === 'OPEN') {
-          if (transaction.method === 'CREDIT_CARD') {
-            processCreditCardPayment(transaction);
-          } else if (transaction.method === 'PAYPAL') {
-            processPayPalPayment(transaction);
-          } else if (transaction.method === 'PLAN') {
-            processPlanPayment(transaction);
-          }
-        } else {
-          console.log('Invalid transaction type!', transaction);
-        }
-      } else if (transaction.type === 'REFUND') {
-        if (transaction.status === 'OPEN') {
-          if (transaction.method === 'CREDIT_CARD') {
-            processCreditCardRefund(transaction);
-          } else if (transaction.method === 'PAYPAL') {
-            processPayPalRefund(transaction);
-          } else if (transaction.method === 'PLAN') {
-            processPlanRefund(transaction);
-          }
-        } else {
-          console.log('Invalid transaction type!', transaction);
-        }
-      } else {
-        console.log('Invalid transaction type!', transaction);
-      }
-    }
-  } else {
+  if (!transactions && transactions.length === 0) {
     console.log('No transactions provided!');
+    return;
   }
+
+  transactions.forEach(transaction => {
+    const processor = paymentProcessors[transaction.method]?.[transaction.type];
+
+    if (!processor) {
+      console.log('Invalid transaction method or type!', transaction);
+      return;
+    }
+
+    if (transaction.status !== 'OPEN') {
+      console.log('Invalid transaction status!', transaction);
+      return;
+    }
+
+    processor(transaction);
+  });
 }
 
 function processCreditCardPayment(transaction) {
-  console.log(
-    'Processing credit card payment for amount: ' + transaction.amount
-  );
+  console.log('Processing credit card payment for amount: ' + transaction.amount);
 }
 
 function processCreditCardRefund(transaction) {
-  console.log(
-    'Processing credit card refund for amount: ' + transaction.amount
-  );
+  console.log('Processing credit card refund for amount: ' + transaction.amount);
 }
 
 function processPayPalPayment(transaction) {
@@ -98,3 +96,6 @@ function processPlanPayment(transaction) {
 function processPlanRefund(transaction) {
   console.log('Processing plan refund for amount: ' + transaction.amount);
 }
+
+
+
