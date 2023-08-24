@@ -36,51 +36,74 @@ function main() {
 }
 
 function processTransactions(transactions) {
-  if (transactions && transactions.length > 0) {
-    for (const transaction of transactions) {
-      if (transaction.type === 'PAYMENT') {
-        if (transaction.status === 'OPEN') {
-          if (transaction.method === 'CREDIT_CARD') {
-            processCreditCardPayment(transaction);
-          } else if (transaction.method === 'PAYPAL') {
-            processPayPalPayment(transaction);
-          } else if (transaction.method === 'PLAN') {
-            processPlanPayment(transaction);
-          }
-        } else {
-          console.log('Invalid transaction type!', transaction);
-        }
-      } else if (transaction.type === 'REFUND') {
-        if (transaction.status === 'OPEN') {
-          if (transaction.method === 'CREDIT_CARD') {
-            processCreditCardRefund(transaction);
-          } else if (transaction.method === 'PAYPAL') {
-            processPayPalRefund(transaction);
-          } else if (transaction.method === 'PLAN') {
-            processPlanRefund(transaction);
-          }
-        } else {
-          console.log('Invalid transaction type!', transaction);
-        }
-      } else {
-        console.log('Invalid transaction type!', transaction);
-      }
-    }
-  } else {
+  if(!transactions || transactions.length <= 0) {
     console.log('No transactions provided!');
+    return;
+  }
+
+  for (const transaction of transactions) {
+    processTransaction(transaction);
+  }
+}
+
+function processTransaction(transaction) {
+  if (transaction.type === 'PAYMENT') {
+    processPaymentTransaction(transaction);
+  } else if (transaction.type === 'REFUND') {
+    processRefundTransaction(transaction);
+  } else {
+    console.log('Invalid transaction type!', transaction);
+  }
+}
+
+function processPaymentTransaction(transaction) {
+  if (transaction.status === 'OPEN') {
+    const processPayment = getProcessPayment(transaction);
+
+    processPayment(transaction);
+  } else {
+    console.log('Invalid transaction type!', transaction);
+  }
+}
+
+function processRefundTransaction(transaction) {
+  if (transaction.status === 'OPEN') {
+    const processRefund = getProcessRefund(transaction);
+
+    processRefund(transaction);
+  } else {
+    console.log('Invalid transaction type!', transaction);
+  }
+}
+
+function getProcessPayment(transaction) {
+  switch(transaction.method) {
+    case "CREDIT_CARD":
+      return processCreditCardPayment;
+    case "PAYPAL":
+      return processPayPalPayment;
+    case "PLAN":
+      return processPlanPayment;
+  }
+}
+
+function getProcessRefund(transaction) {
+  switch(transaction.method) {
+    case "CREDIT_CARD":
+      return processCreditCardRefund;
+    case "PAYPAL":
+      return processPayPalRefund;
+    case "PLAN":
+      return processPlanRefund;
   }
 }
 
 function processCreditCardPayment(transaction) {
-  console.log(
-    'Processing credit card payment for amount: ' + transaction.amount
-  );
+  console.log('Processing credit card payment for amount: ' + transaction.amount);
 }
 
 function processCreditCardRefund(transaction) {
-  console.log(
-    'Processing credit card refund for amount: ' + transaction.amount
-  );
+  console.log('Processing credit card refund for amount: ' + transaction.amount);
 }
 
 function processPayPalPayment(transaction) {
