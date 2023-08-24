@@ -47,9 +47,9 @@ function processTransactions(transactions) {
 }
 
 function processTransaction(transaction) {
-  if (transaction.type === 'PAYMENT') {
+  if (transaction.type === 'PAYMENT' && transaction.status === 'OPEN') {
     processPaymentTransaction(transaction);
-  } else if (transaction.type === 'REFUND') {
+  } else if (transaction.type === 'REFUND' && transaction.status === 'OPEN') {
     processRefundTransaction(transaction);
   } else {
     console.log('Invalid transaction type!', transaction);
@@ -57,23 +57,15 @@ function processTransaction(transaction) {
 }
 
 function processPaymentTransaction(transaction) {
-  if (transaction.status === 'OPEN') {
-    const processPayment = getProcessPayment(transaction);
+  const processPayment = getProcessPayment(transaction);
 
-    processPayment(transaction);
-  } else {
-    console.log('Invalid transaction type!', transaction);
-  }
+  processPayment(transaction);
 }
 
 function processRefundTransaction(transaction) {
-  if (transaction.status === 'OPEN') {
-    const processRefund = getProcessRefund(transaction);
+  const processRefund = getProcessRefund(transaction);
 
-    processRefund(transaction);
-  } else {
-    console.log('Invalid transaction type!', transaction);
-  }
+  processRefund(transaction);
 }
 
 function getProcessPayment(transaction) {
