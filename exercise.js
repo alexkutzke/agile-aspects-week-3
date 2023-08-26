@@ -1,7 +1,7 @@
 main();
 
 function main() {
-  const transactions = [
+  const listTransactions = [
     {
       id: 't1',
       type: 'PAYMENT',
@@ -32,69 +32,82 @@ function main() {
     },
   ];
 
-  processTransactions(transactions);
+  processTransactions(listTransactions);
 }
 
-function processTransactions(transactions) {
-  if (transactions && transactions.length > 0) {
-    for (const transaction of transactions) {
-      if (transaction.type === 'PAYMENT') {
-        if (transaction.status === 'OPEN') {
-          if (transaction.method === 'CREDIT_CARD') {
-            processCreditCardPayment(transaction);
-          } else if (transaction.method === 'PAYPAL') {
-            processPayPalPayment(transaction);
-          } else if (transaction.method === 'PLAN') {
-            processPlanPayment(transaction);
-          }
-        } else {
-          console.log('Invalid transaction type!', transaction);
-        }
-      } else if (transaction.type === 'REFUND') {
-        if (transaction.status === 'OPEN') {
-          if (transaction.method === 'CREDIT_CARD') {
-            processCreditCardRefund(transaction);
-          } else if (transaction.method === 'PAYPAL') {
-            processPayPalRefund(transaction);
-          } else if (transaction.method === 'PLAN') {
-            processPlanRefund(transaction);
-          }
-        } else {
-          console.log('Invalid transaction type!', transaction);
-        }
-      } else {
-        console.log('Invalid transaction type!', transaction);
-      }
-    }
-  } else {
+function processTransactions(listTransactions) {
+  if (!listTransactions || listTransactions.length == 0) {
     console.log('No transactions provided!');
+    return;
   }
+
+  for (const itemTransactions of listTransactions) {
+    if (itemTransactions.type == 'PAYMENT') {
+      if (itemTransactions.status != 'OPEN') {
+        console.log('Invalid transaction type!', itemTransactions);
+        return;
+      }
+
+      switch (itemTransactions.method) {
+        case 'CREDIT_CARD':
+          processCreditCardPayment(itemTransactions);
+          break;
+        case 'PAYPAL':
+          processPayPalPayment(itemTransactions);
+          break;
+        case 'PLAN':
+          processPlanPayment(itemTransactions);
+          break;
+        default:
+          console.log('Invalid transaction method!', itemTransactions);
+      }
+
+    } else if (itemTransactions.type == 'REFUND') {
+      if (itemTransactions.status != 'OPEN') {
+        console.log('Invalid transaction status!', itemTransactions);
+        return;
+      }
+      switch (itemTransactions.method) {
+        case 'CREDIT_CARD':
+          processRefundByCreditCard(itemTransactions);
+          break;
+        case 'PAYPAL':
+          processRefundByPayPal(itemTransactions);
+          break;
+        case 'PLAN':
+          processPlanRefund(itemTransactions);
+          break;
+        default:
+          console.log('Invalid refund method!', itemTransactions);
+      }
+    } else {
+      console.log('Invalid transaction type!', itemTransactions);
+    }
+  }
+
+
 }
 
-function processCreditCardPayment(transaction) {
-  console.log(
-    'Processing credit card payment for amount: ' + transaction.amount
-  );
+function processCreditCardPayment(itemTransactions) {
+  console.log('Processing credit card payment for amount: ' + itemTransactions.amount);
 }
 
-function processCreditCardRefund(transaction) {
-  console.log(
-    'Processing credit card refund for amount: ' + transaction.amount
-  );
+function processCreditCardRefund(itemTransactions) {
+  console.log('Processing credit card refund for amount: ' + itemTransactions.amount);
 }
 
-function processPayPalPayment(transaction) {
-  console.log('Processing PayPal payment for amount: ' + transaction.amount);
+function processPayPalPayment(itemTransactions) {
+  console.log('Processing PayPal payment for amount: ' + itemTransactions.amount);
 }
 
-function processPayPalRefund(transaction) {
-  console.log('Processing PayPal refund for amount: ' + transaction.amount);
+function processPayPalRefund(itemTransactions) {
+  console.log('Processing PayPal refund for amount: ' + itemTransactions.amount);
 }
 
-function processPlanPayment(transaction) {
-  console.log('Processing plan payment for amount: ' + transaction.amount);
+function processPlanPayment(itemTransactions) {
+  console.log('Processing plan payment for amount: ' + itemTransactions.amount);
 }
 
-function processPlanRefund(transaction) {
-  console.log('Processing plan refund for amount: ' + transaction.amount);
+function processPlanRefund(itemTransactions) {
+  console.log('Processing plan refund for amount: ' + itemTransactions.amount);
 }
