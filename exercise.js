@@ -69,11 +69,14 @@ function isOpen(transaction){
 }
 
 function transactionValid(transaction){
-    return methodTransaction(transaction) && (TypeTransaction(transaction) && isOpen(transaction))
+    return  methodTransaction(transaction) && 
+            (TypeTransaction(transaction) && 
+            isOpen(transaction))
 }
 
 function messageInfo(transaction){
-    return methodTransaction(transaction) + (TypeTransaction(transaction)) + transaction.amount
+    return  methodTransaction(transaction) + 
+            (TypeTransaction(transaction)) + transaction.amount
 }
 
 function messageNotValid(transaction){
@@ -81,7 +84,8 @@ function messageNotValid(transaction){
 }
 
 function messageAllValid(transaction){
-    return transactionValid(transaction) ? (messageInfo(transaction)) : (messageNotValid(transaction))
+    return  transactionValid(transaction) ? 
+                (messageInfo(transaction)) : (messageNotValid(transaction))
 }
 
 function processTransactions(transactions){
@@ -90,5 +94,6 @@ function processTransactions(transactions){
        console.log(messageAllValid(transaction))
     }
 
-    return !haveTransactions(transactions) ? console.log('No transactions provided!') : ''
+    return  !haveTransactions(transactions) ?
+                console.log('No transactions provided!') : ''
 }
