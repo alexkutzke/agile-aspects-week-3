@@ -35,6 +35,45 @@ function main() {
     processTransactions(transactions);
 }
 
+function processTransactions(transactions){
+
+    for (const transaction of transactions) {
+       console.log(messageAllValid(transaction))
+    }
+
+    return  !haveTransactions(transactions) ?
+                console.log('No transactions provided!') : ''
+}
+
+function messageAllValid(transaction){
+    return  transactionValid(transaction) ? 
+                (messageInfo(transaction)) : (messageNotValid(transaction))
+}
+
+function haveTransactions(transactions){
+    return transactions && transactions.length > 0
+}
+
+
+function messageNotValid(transaction){
+    return 'Invalid transaction type!' + JSON.stringify(transaction)
+}
+
+function transactionValid(transaction){
+    return  methodTransaction(transaction) && 
+            (TypeTransaction(transaction) && 
+            isOpen(transaction))
+}
+
+function messageInfo(transaction){
+    return  methodTransaction(transaction) + 
+            (TypeTransaction(transaction)) + transaction.amount
+}
+
+function isOpen(transaction){
+    return transaction.status === 'OPEN'
+}
+
 function TypeTransaction(transaction){
     const defineType = type =>{
         const types = {
@@ -54,46 +93,9 @@ function methodTransaction(transaction){
             PAYPAL: 'paypal',
             PLAN:'plan'
         }
-        return methods[method] != undefined ? `Processing PayPal ${methods[method]}` : false
+        return  methods[method] != undefined ? 
+                    `Processing PayPal ${methods[method]}` : false
     }
 
     return defyneMethod(transaction.method)
-}
-
-function haveTransactions(transactions){
-    return transactions && transactions.length > 0
-}
-
-function isOpen(transaction){
-    return transaction.status === 'OPEN'
-}
-
-function transactionValid(transaction){
-    return  methodTransaction(transaction) && 
-            (TypeTransaction(transaction) && 
-            isOpen(transaction))
-}
-
-function messageInfo(transaction){
-    return  methodTransaction(transaction) + 
-            (TypeTransaction(transaction)) + transaction.amount
-}
-
-function messageNotValid(transaction){
-    return 'Invalid transaction type!' + JSON.stringify(transaction)
-}
-
-function messageAllValid(transaction){
-    return  transactionValid(transaction) ? 
-                (messageInfo(transaction)) : (messageNotValid(transaction))
-}
-
-function processTransactions(transactions){
-
-    for (const transaction of transactions) {
-       console.log(messageAllValid(transaction))
-    }
-
-    return  !haveTransactions(transactions) ?
-                console.log('No transactions provided!') : ''
 }
