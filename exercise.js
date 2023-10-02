@@ -1,5 +1,3 @@
-main();
-
 function main() {
   const transactions = [
     {
@@ -36,51 +34,66 @@ function main() {
 }
 
 function processTransactions(transactions) {
-  if (transactions && transactions.length > 0) {
-    for (const transaction of transactions) {
-      if (transaction.type === 'PAYMENT') {
-        if (transaction.status === 'OPEN') {
-          if (transaction.method === 'CREDIT_CARD') {
-            processCreditCardPayment(transaction);
-          } else if (transaction.method === 'PAYPAL') {
-            processPayPalPayment(transaction);
-          } else if (transaction.method === 'PLAN') {
-            processPlanPayment(transaction);
-          }
-        } else {
-          console.log('Invalid transaction type!', transaction);
-        }
-      } else if (transaction.type === 'REFUND') {
-        if (transaction.status === 'OPEN') {
-          if (transaction.method === 'CREDIT_CARD') {
-            processCreditCardRefund(transaction);
-          } else if (transaction.method === 'PAYPAL') {
-            processPayPalRefund(transaction);
-          } else if (transaction.method === 'PLAN') {
-            processPlanRefund(transaction);
-          }
-        } else {
-          console.log('Invalid transaction type!', transaction);
-        }
-      } else {
-        console.log('Invalid transaction type!', transaction);
-      }
-    }
-  } else {
+  if (!transactions || transactions.length === 0) {
     console.log('No transactions provided!');
+    return;
+  }
+
+  for (const transaction of transactions) {
+    if (isValidTransaction(transaction)) {
+      processTransaction(transaction);
+    } else {
+      console.log('Invalid transaction type!', transaction);
+    }
+  }
+}
+
+function isValidTransaction(transaction) {
+  const validTypes = ['PAYMENT', 'REFUND'];
+  const validStatus = ['OPEN', 'CLOSED'];
+  const validMethods = ['CREDIT_CARD', 'PAYPAL', 'PLAN'];
+
+  return (
+    validTypes.includes(transaction.type) &&
+    validStatus.includes(transaction.status) &&
+    validMethods.includes(transaction.method)
+  );
+}
+
+function processTransaction(transaction) {
+  const typeHandlers = {
+    PAYMENT: {
+      OPEN: {
+        CREDIT_CARD: processCreditCardPayment,
+        PAYPAL: processPayPalPayment,
+        PLAN: processPlanPayment,
+      },
+    },
+    REFUND: {
+      OPEN: {
+        CREDIT_CARD: processCreditCardRefund,
+        PAYPAL: processPayPalRefund,
+        PLAN: processPlanRefund,
+      },
+    },
+  };
+
+  const handler =
+    typeHandlers[transaction.type]?.[transaction.status]?.[transaction.method];
+
+  if (handler) {
+    handler(transaction);
+  } else {
+    console.log('Invalid transaction type or status!', transaction);
   }
 }
 
 function processCreditCardPayment(transaction) {
-  console.log(
-    'Processing credit card payment for amount: ' + transaction.amount
-  );
+  console.log('Processing credit card payment for amount: ' + transaction.amount);
 }
 
 function processCreditCardRefund(transaction) {
-  console.log(
-    'Processing credit card refund for amount: ' + transaction.amount
-  );
+  console.log('Processing credit card refund for amount: ' + transaction.amount);
 }
 
 function processPayPalPayment(transaction) {
