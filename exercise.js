@@ -36,65 +36,52 @@ function main() {
 }
 
 function processTransactions(transactions) {
-  if (transactions && transactions.length > 0) {
-    for (const transaction of transactions) {
-      if (transaction.type === 'PAYMENT') {
-        if (transaction.status === 'OPEN') {
-          if (transaction.method === 'CREDIT_CARD') {
-            processCreditCardPayment(transaction);
-          } else if (transaction.method === 'PAYPAL') {
-            processPayPalPayment(transaction);
-          } else if (transaction.method === 'PLAN') {
-            processPlanPayment(transaction);
-          }
-        } else {
-          console.log('Invalid transaction type!', transaction);
-        }
-      } else if (transaction.type === 'REFUND') {
-        if (transaction.status === 'OPEN') {
-          if (transaction.method === 'CREDIT_CARD') {
-            processCreditCardRefund(transaction);
-          } else if (transaction.method === 'PAYPAL') {
-            processPayPalRefund(transaction);
-          } else if (transaction.method === 'PLAN') {
-            processPlanRefund(transaction);
-          }
-        } else {
-          console.log('Invalid transaction type!', transaction);
-        }
-      } else {
-        console.log('Invalid transaction type!', transaction);
-      }
-    }
-  } else {
+  if (!transactions || transactions.length === 0) {
     console.log('No transactions provided!');
+    return;
   }
+
+  transactions.forEach((transaction) => {
+    if (transaction.status !== 'OPEN') {
+      console.log('Invalid transaction status!', transaction);
+      return;
+    }
+
+    const processors = {
+      PAYMENT: processPayment,
+      REFUND: processRefund,
+    };
+
+    const processor = processors[transaction.type];
+
+    if (processor) {
+      processor(transaction);
+    } else {
+      console.log('Invalid transaction type!', transaction);
+    }
+  });
 }
 
-function processCreditCardPayment(transaction) {
-  console.log(
-    'Processing credit card payment for amount: ' + transaction.amount
-  );
+function processPayment(transaction) {
+  const paymentMethods = {
+    CREDIT_CARD: 'credit card',
+    PAYPAL: 'PayPal',
+    PLAN: 'plan',
+  };
+
+  const method = paymentMethods[transaction.method] || 'unknown method';
+
+  console.log(`Processing ${method} payment for amount: ${transaction.amount}`);
 }
 
-function processCreditCardRefund(transaction) {
-  console.log(
-    'Processing credit card refund for amount: ' + transaction.amount
-  );
-}
+function processRefund(transaction) {
+  const refundMethods = {
+    CREDIT_CARD: 'credit card',
+    PAYPAL: 'PayPal',
+    PLAN: 'plan',
+  };
 
-function processPayPalPayment(transaction) {
-  console.log('Processing PayPal payment for amount: ' + transaction.amount);
-}
+  const method = refundMethods[transaction.method] || 'unknown method';
 
-function processPayPalRefund(transaction) {
-  console.log('Processing PayPal refund for amount: ' + transaction.amount);
-}
-
-function processPlanPayment(transaction) {
-  console.log('Processing plan payment for amount: ' + transaction.amount);
-}
-
-function processPlanRefund(transaction) {
-  console.log('Processing plan refund for amount: ' + transaction.amount);
+  console.log(`Processing ${method} refund for amount: ${transaction.amount}`);
 }
